@@ -1,0 +1,1690 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/redfire/.cargo/registry/src/github.com-1ecc6299db9ec823/auto_impl-0.5.0/src/gen.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gen.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../auto_impl/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
+<span id="647">647</span>
+<span id="648">648</span>
+<span id="649">649</span>
+<span id="650">650</span>
+<span id="651">651</span>
+<span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
+<span id="675">675</span>
+<span id="676">676</span>
+<span id="677">677</span>
+<span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
+<span id="684">684</span>
+<span id="685">685</span>
+<span id="686">686</span>
+<span id="687">687</span>
+<span id="688">688</span>
+<span id="689">689</span>
+<span id="690">690</span>
+<span id="691">691</span>
+<span id="692">692</span>
+<span id="693">693</span>
+<span id="694">694</span>
+<span id="695">695</span>
+<span id="696">696</span>
+<span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
+<span id="702">702</span>
+<span id="703">703</span>
+<span id="704">704</span>
+<span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
+<span id="709">709</span>
+<span id="710">710</span>
+<span id="711">711</span>
+<span id="712">712</span>
+<span id="713">713</span>
+<span id="714">714</span>
+<span id="715">715</span>
+<span id="716">716</span>
+<span id="717">717</span>
+<span id="718">718</span>
+<span id="719">719</span>
+<span id="720">720</span>
+<span id="721">721</span>
+<span id="722">722</span>
+<span id="723">723</span>
+<span id="724">724</span>
+<span id="725">725</span>
+<span id="726">726</span>
+<span id="727">727</span>
+<span id="728">728</span>
+<span id="729">729</span>
+<span id="730">730</span>
+<span id="731">731</span>
+<span id="732">732</span>
+<span id="733">733</span>
+<span id="734">734</span>
+<span id="735">735</span>
+<span id="736">736</span>
+<span id="737">737</span>
+<span id="738">738</span>
+<span id="739">739</span>
+<span id="740">740</span>
+<span id="741">741</span>
+<span id="742">742</span>
+<span id="743">743</span>
+<span id="744">744</span>
+<span id="745">745</span>
+<span id="746">746</span>
+<span id="747">747</span>
+<span id="748">748</span>
+<span id="749">749</span>
+<span id="750">750</span>
+<span id="751">751</span>
+<span id="752">752</span>
+<span id="753">753</span>
+<span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+</pre><pre class="rust"><code><span class="kw">use </span>proc_macro2::{Span <span class="kw">as </span>Span2, TokenStream <span class="kw">as </span>TokenStream2};
+<span class="kw">use </span>proc_macro_error::{abort, emit_error};
+<span class="kw">use </span>quote::{ToTokens, TokenStreamExt};
+<span class="kw">use </span>syn::{
+    spanned::Spanned, FnArg, Ident, ItemTrait, Lifetime, Pat, PatIdent, ReturnType, Signature,
+    TraitBound, TraitBoundModifier, TraitItem, TraitItemConst, TraitItemMethod, TraitItemType,
+    Type, TypeParamBound, WherePredicate,
+};
+
+<span class="kw">use crate</span>::{
+    analyze::find_suitable_param_names,
+    attr::{is_our_attr, parse_our_attr, OurAttr},
+    proxy::ProxyType,
+};
+
+
+
+<span class="doccomment">/// Generates one complete impl of the given trait for each of the given proxy
+/// types. All impls are returned as token stream.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>gen_impls(proxy_types: <span class="kw-2">&amp;</span>[ProxyType], trait_def: <span class="kw-2">&amp;</span>syn::ItemTrait) -&gt; TokenStream2 {
+    <span class="kw">let </span><span class="kw-2">mut </span>tokens = TokenStream2::new();
+
+    <span class="kw">let </span>(proxy_ty_param, proxy_lt_param) = find_suitable_param_names(trait_def);
+
+    <span class="comment">// One impl for each proxy type
+    </span><span class="kw">for </span>proxy_type <span class="kw">in </span>proxy_types {
+        <span class="kw">let </span>header = gen_header(proxy_type, trait_def, <span class="kw-2">&amp;</span>proxy_ty_param, <span class="kw-2">&amp;</span>proxy_lt_param);
+        <span class="kw">let </span>items = gen_items(proxy_type, trait_def, <span class="kw-2">&amp;</span>proxy_ty_param);
+
+        <span class="kw">if let </span>ProxyType::Box | ProxyType::Rc | ProxyType::Arc = proxy_type {
+            tokens.append_all(<span class="macro">quote! </span>{
+                <span class="kw">const _</span>: () = {
+                    <span class="kw">extern crate </span>alloc;
+                    #header { #( #items )* }
+                };
+            });
+        } <span class="kw">else </span>{
+            tokens.append_all(<span class="macro">quote! </span>{
+                #header { #( #items )* }
+            });
+        }
+    }
+
+    tokens
+}
+
+<span class="doccomment">/// Generates the header of the impl of the given trait for the given proxy
+/// type.
+</span><span class="kw">fn </span>gen_header(
+    proxy_type: <span class="kw-2">&amp;</span>ProxyType,
+    trait_def: <span class="kw-2">&amp;</span>ItemTrait,
+    proxy_ty_param: <span class="kw-2">&amp;</span>Ident,
+    proxy_lt_param: <span class="kw-2">&amp;</span>Lifetime,
+) -&gt; TokenStream2 {
+    <span class="comment">// Generate generics for impl positions from trait generics.
+    </span><span class="kw">let </span>(impl_generics, trait_generics, where_clause) = trait_def.generics.split_for_impl();
+
+    <span class="comment">// The name of the trait with all generic parameters applied.
+    </span><span class="kw">let </span>trait_ident = <span class="kw-2">&amp;</span>trait_def.ident;
+    <span class="kw">let </span>trait_path = <span class="macro">quote! </span>{ #trait_ident #trait_generics };
+
+
+    <span class="comment">// Here we assemble the parameter list of the impl (the thing in
+    // `impl&lt; ... &gt;`). This is simply the parameter list of the trait with
+    // one or two parameters added. For a trait `trait Foo&lt;&#39;x, &#39;y, A, B&gt;`,
+    // it will look like this:
+    //
+    //    &#39;{proxy_lt_param}, &#39;x, &#39;y, A, B, {proxy_ty_param}
+    //
+    // The `&#39;{proxy_lt_param}` in the beginning is only added when the proxy
+    // type is `&amp;` or `&amp;mut`.
+    </span><span class="kw">let </span>impl_generics = {
+        <span class="comment">// Determine whether we can add a `?Sized` relaxation to allow trait
+        // objects. We can do that as long as there is no method that has a
+        // `self` by value receiver and no `where Self: Sized` bound.
+        </span><span class="kw">let </span>sized_required = trait_def
+            .items
+            .iter()
+            <span class="comment">// Only interested in methods
+            </span>.filter_map(|item| {
+                <span class="kw">if let </span>TraitItem::Method(m) = item {
+                    <span class="prelude-val">Some</span>(m)
+                } <span class="kw">else </span>{
+                    <span class="prelude-val">None
+                </span>}
+            })
+            <span class="comment">// We also ignore methods that we will not override. In the case of
+            // invalid attributes it is save to assume default behavior.
+            </span>.filter(|m| !should_keep_default_for(m, proxy_type))
+            .any(|m| {
+                <span class="comment">// Check if there is a `Self: Sized` bound on the method.
+                </span><span class="kw">let </span>self_is_bounded_sized = m
+                    .sig
+                    .generics
+                    .where_clause
+                    .iter()
+                    .flat_map(|wc| <span class="kw-2">&amp;</span>wc.predicates)
+                    .filter_map(|pred| {
+                        <span class="kw">if let </span>WherePredicate::Type(p) = pred {
+                            <span class="prelude-val">Some</span>(p)
+                        } <span class="kw">else </span>{
+                            <span class="prelude-val">None
+                        </span>}
+                    })
+                    .any(|pred| {
+                        <span class="comment">// Check if the type is `Self`
+                        </span><span class="kw">match </span><span class="kw-2">&amp;</span>pred.bounded_ty {
+                            Type::Path(p) <span class="kw">if </span>p.path.is_ident(<span class="string">&quot;Self&quot;</span>) =&gt; {
+                                <span class="comment">// Check if the bound contains `Sized`
+                                </span>pred.bounds.iter().any(|b| <span class="kw">match </span>b {
+                                    TypeParamBound::Trait(TraitBound {
+                                        modifier: TraitBoundModifier::None,
+                                        path,
+                                        ..
+                                    }) =&gt; path.is_ident(<span class="string">&quot;Sized&quot;</span>),
+                                    <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+                                })
+                            }
+                            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+                        }
+                    });
+
+                <span class="comment">// Check if the first parameter is `self` by value. In that
+                // case, we might require `Self` to be `Sized`.
+                </span><span class="kw">let </span>self_value_param = <span class="kw">match </span>m.sig.inputs.first() {
+                    <span class="prelude-val">Some</span>(FnArg::Receiver(receiver)) =&gt; receiver.reference.is_none(),
+                    <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+                };
+
+                <span class="comment">// Check if return type is `Self`
+                </span><span class="kw">let </span>self_value_return = <span class="kw">match </span><span class="kw-2">&amp;</span>m.sig.output {
+                    ReturnType::Type(<span class="kw">_</span>, t) =&gt; {
+                        <span class="kw">if let </span>Type::Path(p) = <span class="kw-2">&amp;**</span>t {
+                            p.path.is_ident(<span class="string">&quot;Self&quot;</span>)
+                        } <span class="kw">else </span>{
+                            <span class="bool-val">false
+                        </span>}
+                    }
+                    <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+                };
+
+                <span class="comment">// TODO: check for `Self` parameter in any other argument.
+
+                // If for this method, `Self` is used in a position that
+                // requires `Self: Sized` or this bound is added explicitly, we
+                // cannot add the `?Sized` relaxation to the impl body.
+                </span>self_value_param || self_value_return || self_is_bounded_sized
+            });
+
+        <span class="kw">let </span>relaxation = <span class="kw">if </span>sized_required {
+            <span class="macro">quote! </span>{}
+        } <span class="kw">else </span>{
+            <span class="macro">quote! </span>{ + <span class="question-mark">?</span>::core::marker::Sized }
+        };
+
+        <span class="comment">// Check if there are some `Self: Foo` bounds on methods. If so, we
+        // need to add those bounds to `T` as well. See issue #11 for more
+        // information, but in short: there is no better solution. Method where
+        // clauses with `Self: Foo` force us to add `T: Foo` to the impl
+        // header, as we otherwise cannot generate a valid impl block.
+        </span><span class="kw">let </span>additional_bounds = trait_def
+            .items
+            .iter()
+            <span class="comment">// Only interested in methods
+            </span>.filter_map(|item| {
+                <span class="kw">if let </span>TraitItem::Method(m) = item {
+                    <span class="prelude-val">Some</span>(m)
+                } <span class="kw">else </span>{
+                    <span class="prelude-val">None
+                </span>}
+            })
+            <span class="comment">// We also ignore methods that we will not override. In the case of
+            // invalid attributes it is save to assume default behavior.
+            </span>.filter(|m| !should_keep_default_for(m, proxy_type))
+            <span class="comment">// Exact all relevant bounds
+            </span>.flat_map(|m| {
+                m.sig
+                    .generics
+                    .where_clause
+                    .iter()
+                    .flat_map(|wc| <span class="kw-2">&amp;</span>wc.predicates)
+                    .filter_map(|pred| {
+                        <span class="kw">if let </span>WherePredicate::Type(p) = pred {
+                            <span class="prelude-val">Some</span>(p)
+                        } <span class="kw">else </span>{
+                            <span class="prelude-val">None
+                        </span>}
+                    })
+                    .filter(|p| {
+                        <span class="comment">// Only `Self:` bounds
+                        </span><span class="kw">match </span><span class="kw-2">&amp;</span>p.bounded_ty {
+                            Type::Path(p) =&gt; p.path.is_ident(<span class="string">&quot;Self&quot;</span>),
+                            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+                        }
+                    })
+                    .flat_map(|p| <span class="kw-2">&amp;</span>p.bounds)
+                    .filter_map(|b| {
+                        <span class="comment">// We are only interested in trait bounds. That&#39;s
+                        // because lifetime bounds on `Self` do not need to be
+                        // added to the impl header. That&#39;s because all values
+                        // &quot;derived&quot; from `self` also meet the same lifetime
+                        // bound as `self`. In simpler terms: while `self.field`
+                        // might not be `Clone` even if `Self: Clone`,
+                        // `self.field` is always `: &#39;a` if `Self: &#39;a`.
+                        </span><span class="kw">match </span>b {
+                            TypeParamBound::Trait(t) =&gt; <span class="prelude-val">Some</span>(t),
+                            TypeParamBound::Lifetime(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
+                        }
+                    })
+            });
+
+        <span class="comment">// Determine if our proxy type needs a lifetime parameter
+        </span><span class="kw">let </span>(<span class="kw-2">mut </span>params, ty_bounds) = <span class="kw">match </span>proxy_type {
+            ProxyType::Ref | ProxyType::RefMut =&gt; (
+                <span class="macro">quote! </span>{ #proxy_lt_param, },
+                <span class="macro">quote! </span>{ : #proxy_lt_param + #trait_path #relaxation #(+ #additional_bounds)* },
+            ),
+            ProxyType::Box | ProxyType::Rc | ProxyType::Arc =&gt; (
+                <span class="macro">quote! </span>{},
+                <span class="macro">quote! </span>{ : #trait_path #relaxation #(+ #additional_bounds)* },
+            ),
+            ProxyType::Fn | ProxyType::FnMut | ProxyType::FnOnce =&gt; {
+                <span class="kw">let </span>fn_bound = gen_fn_type_for_trait(proxy_type, trait_def);
+                (<span class="macro">quote! </span>{}, <span class="macro">quote! </span>{ : #fn_bound })
+            }
+        };
+
+        <span class="comment">// Append all parameters from the trait. Sadly, `impl_generics`
+        // includes the angle brackets `&lt; &gt;` so we have to remove them like
+        // this.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>tts = impl_generics
+            .into_token_stream()
+            .into_iter()
+            .skip(<span class="number">1</span>) <span class="comment">// the opening `&lt;`
+            </span>.collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+        tts.pop(); <span class="comment">// the closing `&gt;`
+        </span>params.append_all(<span class="kw-2">&amp;</span>tts);
+
+        <span class="comment">// Append proxy type parameter (if there aren&#39;t any parameters so far,
+        // we need to add a comma first).
+        </span><span class="kw">let </span>comma = <span class="kw">if </span>params.is_empty() || tts.is_empty() {
+            <span class="macro">quote! </span>{}
+        } <span class="kw">else </span>{
+            <span class="macro">quote! </span>{ , }
+        };
+        params.append_all(<span class="macro">quote! </span>{ #comma #proxy_ty_param #ty_bounds });
+
+        params
+    };
+
+
+    <span class="comment">// The tokens after `for` in the impl header (the type the trait is
+    // implemented for).
+    </span><span class="attr">#[rustfmt::skip]
+    </span><span class="kw">let </span>self_ty = <span class="kw">match </span><span class="kw-2">*</span>proxy_type {
+        ProxyType::Ref      =&gt; <span class="macro">quote! </span>{ &amp; #proxy_lt_param #proxy_ty_param },
+        ProxyType::RefMut   =&gt; <span class="macro">quote! </span>{ &amp; #proxy_lt_param <span class="kw-2">mut </span>#proxy_ty_param },
+        ProxyType::Arc      =&gt; <span class="macro">quote! </span>{ alloc::sync::Arc&lt;#proxy_ty_param&gt; },
+        ProxyType::Rc       =&gt; <span class="macro">quote! </span>{ alloc::rc::Rc&lt;#proxy_ty_param&gt; },
+        ProxyType::Box      =&gt; <span class="macro">quote! </span>{ alloc::boxed::Box&lt;#proxy_ty_param&gt; },
+        ProxyType::Fn       =&gt; <span class="macro">quote! </span>{ #proxy_ty_param },
+        ProxyType::FnMut    =&gt; <span class="macro">quote! </span>{ #proxy_ty_param },
+        ProxyType::FnOnce   =&gt; <span class="macro">quote! </span>{ #proxy_ty_param },
+    };
+
+    <span class="comment">// If the trait has super traits, we need to add the super trait bound to
+    // our self type. This can only be done in the where clause, so we need to
+    // combine the existing where clauses with our new predicate in that case.
+    </span><span class="kw">let </span>where_clause = <span class="kw">if </span>!trait_def.supertraits.is_empty() {
+        <span class="kw">let </span><span class="kw-2">mut </span>out = <span class="macro">quote! </span>{ <span class="kw">where </span>};
+
+        <span class="kw">if </span>!trait_def.supertraits.is_empty() {
+            <span class="kw">let </span>supertraits = <span class="kw-2">&amp;</span>trait_def.supertraits;
+            out.extend(<span class="macro">quote! </span>{ #self_ty: #supertraits, });
+        }
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(predicates) = where_clause.map(|c| <span class="kw-2">&amp;</span>c.predicates) {
+            out.extend(predicates.into_token_stream());
+        }
+
+        out
+    } <span class="kw">else </span>{
+        where_clause.into_token_stream()
+    };
+
+    <span class="comment">// Combine everything
+    </span><span class="macro">quote! </span>{
+        <span class="kw">impl</span>&lt;#impl_generics&gt; #trait_path <span class="kw">for </span>#self_ty #where_clause
+    }
+}
+
+<span class="doccomment">/// Generates the Fn-trait type (e.g. `FnMut(u32) -&gt; String`) for the given
+/// trait and proxy type (the latter has to be `Fn`, `FnMut` or `FnOnce`!)
+///
+/// If the trait is unsuitable to be implemented for the given proxy type, an
+/// error is emitted.
+</span><span class="kw">fn </span>gen_fn_type_for_trait(proxy_type: <span class="kw-2">&amp;</span>ProxyType, trait_def: <span class="kw-2">&amp;</span>ItemTrait) -&gt; TokenStream2 {
+    <span class="comment">// Only traits with exactly one method can be implemented for Fn-traits.
+    // Associated types and consts are also not allowed.
+    </span><span class="kw">let </span>method = trait_def.items.get(<span class="number">0</span>).and_then(|item| {
+        <span class="kw">if let </span>TraitItem::Method(m) = item {
+            <span class="prelude-val">Some</span>(m)
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>}
+    });
+
+    <span class="comment">// If this requirement is not satisfied, we emit an error.
+    </span><span class="kw">if </span>method.is_none() || trait_def.items.len() &gt; <span class="number">1 </span>{
+        <span class="macro">emit_error!</span>(
+            trait_def.span(),
+            <span class="string">&quot;this trait cannot be auto-implemented for Fn-traits (only traits with exactly \
+                one method and no other items are allowed)&quot;</span>,
+        );
+        <span class="kw">return </span>TokenStream2::new();
+    }
+
+    <span class="comment">// We checked for `None` above
+    </span><span class="kw">let </span>method = method.unwrap();
+    <span class="kw">let </span>sig = <span class="kw-2">&amp;</span>method.sig;
+
+    <span class="comment">// Check for forbidden modifier of the method
+    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(const_token) = sig.constness {
+        <span class="macro">emit_error!</span>(
+            const_token.span(),
+            <span class="string">&quot;the trait &#39;{}&#39; cannot be auto-implemented for Fn-traits: const methods are not \
+                allowed&quot;</span>,
+            trait_def.ident,
+        );
+    }
+
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(unsafe_token) = <span class="kw-2">&amp;</span>sig.unsafety {
+        <span class="macro">emit_error!</span>(
+            unsafe_token.span(),
+            <span class="string">&quot;the trait &#39;{}&#39; cannot be auto-implemented for Fn-traits: unsafe methods are not \
+                allowed&quot;</span>,
+            trait_def.ident,
+        );
+    }
+
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(abi_token) = <span class="kw-2">&amp;</span>sig.abi {
+        <span class="macro">emit_error!</span>(
+            abi_token.span(),
+            <span class="string">&quot;the trait &#39;{}&#39; cannot be implemented for Fn-traits: custom ABIs are not allowed&quot;</span>,
+            trait_def.ident,
+        );
+    }
+
+
+    <span class="comment">// =======================================================================
+    // Check if the trait can be implemented for the given proxy type
+    </span><span class="kw">let </span>self_type = SelfType::from_sig(sig);
+    <span class="kw">let </span>err = <span class="kw">match </span>(self_type, proxy_type) {
+        <span class="comment">// The method needs to have a receiver
+        </span>(SelfType::None, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>((<span class="string">&quot;Fn-traits&quot;</span>, <span class="string">&quot;no&quot;</span>, <span class="string">&quot;&quot;</span>)),
+
+        <span class="comment">// We can&#39;t impl methods with `&amp;mut self` or `&amp;self` receiver for
+        // `FnOnce`
+        </span>(SelfType::Mut, ProxyType::FnOnce) =&gt; {
+            <span class="prelude-val">Some</span>((<span class="string">&quot;`FnOnce`&quot;</span>, <span class="string">&quot;a `&amp;mut self`&quot;</span>, <span class="string">&quot; (only `self` is allowed)&quot;</span>))
+        }
+        (SelfType::Ref, ProxyType::FnOnce) =&gt; {
+            <span class="prelude-val">Some</span>((<span class="string">&quot;`FnOnce`&quot;</span>, <span class="string">&quot;a `&amp;self`&quot;</span>, <span class="string">&quot; (only `self` is allowed)&quot;</span>))
+        }
+
+        <span class="comment">// We can&#39;t impl methods with `&amp;self` receiver for `FnMut`
+        </span>(SelfType::Ref, ProxyType::FnMut) =&gt; <span class="prelude-val">Some</span>((
+            <span class="string">&quot;`FnMut`&quot;</span>,
+            <span class="string">&quot;a `&amp;self`&quot;</span>,
+            <span class="string">&quot; (only `self` and `&amp;mut self` are allowed)&quot;</span>,
+        )),
+
+        <span class="comment">// Other combinations are fine
+        </span><span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+    };
+
+    <span class="kw">if let </span><span class="prelude-val">Some</span>((fn_traits, receiver, allowed)) = err {
+        <span class="macro">emit_error!</span>(
+            method.sig.span(),
+            <span class="string">&quot;the trait &#39;{}&#39; cannot be auto-implemented for {}, because this method has \
+                {} receiver{}&quot;</span>,
+            trait_def.ident,
+            fn_traits,
+            receiver,
+            allowed,
+        );
+
+        <span class="kw">return </span>TokenStream2::new();
+    }
+
+    <span class="comment">// =======================================================================
+    // Generate the full Fn-type
+
+    // The path to the Fn-trait
+    </span><span class="kw">let </span>fn_name = <span class="kw">match </span>proxy_type {
+        ProxyType::Fn =&gt; <span class="macro">quote! </span>{ ::core::ops::Fn },
+        ProxyType::FnMut =&gt; <span class="macro">quote! </span>{ ::core::ops::FnMut },
+        ProxyType::FnOnce =&gt; <span class="macro">quote! </span>{ ::core::ops::FnOnce },
+        <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;internal error in auto_impl (function contract violation)&quot;</span>),
+    };
+
+    <span class="comment">// The return type
+    </span><span class="kw">let </span>ret = <span class="kw-2">&amp;</span>sig.output;
+
+    <span class="comment">// Now it gets a bit complicated. The types of the function signature
+    // could contain &quot;local&quot; lifetimes, meaning that they are not declared in
+    // the trait definition (or are `&#39;static`). We need to extract all local
+    // lifetimes to declare them with HRTB (e.g. `for&lt;&#39;a&gt;`).
+    //
+    // In Rust 2015 that was easy: we could just take the lifetimes explicitly
+    // declared in the function signature. Those were the local lifetimes.
+    // Unfortunately, with in-band lifetimes, things get more complicated. We
+    // need to take a look at all lifetimes inside the types (arbitrarily deep)
+    // and check if they are local or not.
+    //
+    // In cases where lifetimes are omitted (e.g. `&amp;str`), we don&#39;t have a
+    // problem. If we just translate that to `for&lt;&gt; Fn(&amp;str)`, it&#39;s fine: all
+    // omitted lifetimes in an `Fn()` type are automatically declared as HRTB.
+    //
+    // TODO: Implement this check for in-band lifetimes!
+    </span><span class="kw">let </span>local_lifetimes = sig.generics.lifetimes();
+
+    <span class="comment">// The input types as comma separated list. We skip the first argument, as
+    // this is the receiver argument.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>arg_types = TokenStream2::new();
+    <span class="kw">for </span>arg <span class="kw">in </span>sig.inputs.iter().skip(<span class="number">1</span>) {
+        <span class="kw">match </span>arg {
+            FnArg::Typed(pat) =&gt; {
+                <span class="kw">let </span>ty = <span class="kw-2">&amp;</span>pat.ty;
+                arg_types.append_all(<span class="macro">quote! </span>{ #ty , });
+            }
+
+            <span class="comment">// We skipped the receiver already.
+            </span>FnArg::Receiver(r) =&gt; {
+                <span class="macro">abort!</span>(
+                    r.span(),
+                    <span class="string">&quot;receiver argument that&#39;s not the first argument (auto_impl is confused)&quot;</span>,
+                );
+            }
+        }
+    }
+
+
+    <span class="macro">quote! </span>{
+        <span class="kw">for</span>&lt; #(#local_lifetimes),* &gt; #fn_name (#arg_types) #ret
+    }
+}
+
+<span class="doccomment">/// Generates the implementation of all items of the given trait. These
+/// implementations together are the body of the `impl` block.
+</span><span class="kw">fn </span>gen_items(
+    proxy_type: <span class="kw-2">&amp;</span>ProxyType,
+    trait_def: <span class="kw-2">&amp;</span>ItemTrait,
+    proxy_ty_param: <span class="kw-2">&amp;</span>Ident,
+) -&gt; Vec&lt;TokenStream2&gt; {
+    trait_def
+        .items
+        .iter()
+        .filter_map(|item| {
+            <span class="kw">match </span>item {
+                TraitItem::Const(c) =&gt; {
+                    gen_const_item(proxy_type, c, trait_def, proxy_ty_param).ok()
+                }
+                TraitItem::Method(method) =&gt; {
+                    gen_method_item(proxy_type, method, trait_def, proxy_ty_param).ok()
+                }
+                TraitItem::Type(ty) =&gt; {
+                    gen_type_item(proxy_type, ty, trait_def, proxy_ty_param).ok()
+                }
+                TraitItem::Macro(mac) =&gt; {
+                    <span class="comment">// We cannot resolve the macro invocation and thus cannot know
+                    // if it adds additional items to the trait. Thus, we have to
+                    // give up.
+                    </span><span class="macro">emit_error!</span>(
+                        mac.span(),
+                        <span class="string">&quot;traits with macro invocations in their bodies are not \
+                        supported by auto_impl&quot;</span>,
+                    );
+                    <span class="prelude-val">None
+                </span>}
+                TraitItem::Verbatim(v) =&gt; {
+                    <span class="comment">// I don&#39;t quite know when this happens, but it&#39;s better to
+                    // notify the user with a nice error instead of panicking.
+                    </span><span class="macro">emit_error!</span>(
+                        v.span(),
+                        <span class="string">&quot;unexpected &#39;verbatim&#39;-item (auto-impl doesn&#39;t know how to handle it)&quot;</span>,
+                    );
+                    <span class="prelude-val">None
+                </span>}
+                <span class="kw">_ </span>=&gt; {
+                    <span class="comment">// `syn` enums are `non_exhaustive` to be future-proof. If a
+                    // trait contains a kind of item we don&#39;t even know about, we
+                    // emit an error.
+                    </span><span class="macro">emit_error!</span>(
+                        item.span(),
+                        <span class="string">&quot;unknown trait item (auto-impl doesn&#39;t know how to handle it)&quot;</span>,
+                    );
+                    <span class="prelude-val">None
+                </span>}
+            }
+        })
+        .collect()
+}
+
+<span class="doccomment">/// Generates the implementation of an associated const item described by
+/// `item`. The implementation is returned as token stream.
+///
+/// If the proxy type is an Fn*-trait, an error is emitted and `Err(())` is
+/// returned.
+</span><span class="kw">fn </span>gen_const_item(
+    proxy_type: <span class="kw-2">&amp;</span>ProxyType,
+    item: <span class="kw-2">&amp;</span>TraitItemConst,
+    trait_def: <span class="kw-2">&amp;</span>ItemTrait,
+    proxy_ty_param: <span class="kw-2">&amp;</span>Ident,
+) -&gt; <span class="prelude-ty">Result</span>&lt;TokenStream2, ()&gt; {
+    <span class="comment">// A trait with associated consts cannot be implemented for Fn* types.
+    </span><span class="kw">if </span>proxy_type.is_fn() {
+        <span class="macro">emit_error!</span>(
+            item.span(),
+            <span class="string">&quot;the trait `{}` cannot be auto-implemented for Fn-traits, because it has \
+                associated consts&quot;</span>,
+            trait_def.ident;
+
+            note = <span class="string">&quot;only traits with a single method can be implemented for Fn-traits&quot;</span>;
+        );
+        <span class="kw">return </span><span class="prelude-val">Err</span>(());
+    }
+
+    <span class="comment">// We simply use the associated const from our type parameter.
+    </span><span class="kw">let </span>const_name = <span class="kw-2">&amp;</span>item.ident;
+    <span class="kw">let </span>const_ty = <span class="kw-2">&amp;</span>item.ty;
+
+    <span class="prelude-val">Ok</span>(<span class="macro">quote! </span>{
+        <span class="kw">const </span>#const_name: #const_ty = #proxy_ty_param::#const_name;
+    })
+}
+
+<span class="doccomment">/// Generates the implementation of an associated type item described by `item`.
+/// The implementation is returned as token stream.
+///
+/// If the proxy type is an Fn*-trait, an error is emitted and `Err(())` is
+/// returned.
+</span><span class="kw">fn </span>gen_type_item(
+    proxy_type: <span class="kw-2">&amp;</span>ProxyType,
+    item: <span class="kw-2">&amp;</span>TraitItemType,
+    trait_def: <span class="kw-2">&amp;</span>ItemTrait,
+    proxy_ty_param: <span class="kw-2">&amp;</span>Ident,
+) -&gt; <span class="prelude-ty">Result</span>&lt;TokenStream2, ()&gt; {
+    <span class="comment">// A trait with associated types cannot be implemented for Fn* types.
+    </span><span class="kw">if </span>proxy_type.is_fn() {
+        <span class="macro">emit_error!</span>(
+            item.span(),
+            <span class="string">&quot;the trait `{}` cannot be auto-implemented for Fn-traits, because it has \
+                associated types&quot;</span>,
+                trait_def.ident;
+
+            note = <span class="string">&quot;only traits with a single method can be implemented for Fn-traits&quot;</span>;
+        );
+        <span class="kw">return </span><span class="prelude-val">Err</span>(());
+    }
+
+    <span class="comment">// We simply use the associated type from our type parameter.
+    </span><span class="kw">let </span>assoc_name = <span class="kw-2">&amp;</span>item.ident;
+
+    <span class="prelude-val">Ok</span>(<span class="macro">quote! </span>{
+        <span class="kw">type </span>#assoc_name = #proxy_ty_param::#assoc_name;
+    })
+}
+
+<span class="doccomment">/// Generates the implementation of a method item described by `item`. The
+/// implementation is returned as token stream.
+///
+/// This function also performs sanity checks, e.g. whether the proxy type can
+/// be used to implement the method. If any error occurs, the error is
+/// immediately emitted and `Err(())` is returned.
+</span><span class="kw">fn </span>gen_method_item(
+    proxy_type: <span class="kw-2">&amp;</span>ProxyType,
+    item: <span class="kw-2">&amp;</span>TraitItemMethod,
+    trait_def: <span class="kw-2">&amp;</span>ItemTrait,
+    proxy_ty_param: <span class="kw-2">&amp;</span>Ident,
+) -&gt; <span class="prelude-ty">Result</span>&lt;TokenStream2, ()&gt; {
+    <span class="comment">// If this method has a `#[auto_impl(keep_default_for(...))]` attribute for
+    // the given proxy type, we don&#39;t generate anything for this impl block.
+    </span><span class="kw">if </span>should_keep_default_for(item, proxy_type) {
+        <span class="kw">if </span>item.default.is_some() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(TokenStream2::new());
+        } <span class="kw">else </span>{
+            <span class="macro">emit_error!</span>(
+                item.sig.span(),
+                <span class="string">&quot;the method `{}` has the attribute `keep_default_for` but is not a default \
+                    method (no body is provided)&quot;</span>,
+                item.sig.ident,
+            );
+            <span class="kw">return </span><span class="prelude-val">Err</span>(());
+        }
+    }
+
+    <span class="comment">// Determine the kind of the method, determined by the self type.
+    </span><span class="kw">let </span>sig = <span class="kw-2">&amp;</span>item.sig;
+    <span class="kw">let </span>self_arg = SelfType::from_sig(sig);
+
+    <span class="comment">// Check self type and proxy type combination
+    </span>check_receiver_compatible(proxy_type, self_arg, <span class="kw-2">&amp;</span>trait_def.ident, sig.span().into());
+
+    <span class="comment">// Generate the list of argument used to call the method.
+    </span><span class="kw">let </span>args = get_arg_list(sig.inputs.iter());
+
+    <span class="comment">// Build the turbofish type parameters. We need to pass type parameters
+    // explicitly as they cannot be inferred in all cases (e.g. something like
+    // `mem::size_of`). However, we don&#39;t explicitly specify lifetime
+    // parameters. Most lifetime parameters are so called late-bound lifetimes
+    // (ones that stick to input parameters) and Rust prohibits us from
+    // specifying late-bound lifetimes explicitly (which is not a problem,
+    // because those can always be correctly inferred). It would be possible to
+    // explicitly specify early-bound lifetimes, but this is hardly useful.
+    // Early-bound lifetimes are lifetimes that are only attached to the return
+    // type. Something like:
+    //
+    //     fn foo&lt;&#39;a&gt;() -&gt; &amp;&#39;a i32
+    //
+    // It&#39;s hard to imagine how such a function would even work. So since those
+    // functions are really rare and special, we won&#39;t support them. In
+    // particular, for us to determine if a lifetime parameter is early- or
+    // late-bound would be *really* difficult.
+    //
+    // So we just specify type parameters. In the future, however, we need to
+    // add support for const parameters. But those are not remotely stable yet,
+    // so we can wait a bit still.
+    </span><span class="kw">let </span>generic_types = sig
+        .generics
+        .type_params()
+        .map(|param| {
+            <span class="kw">let </span>name = <span class="kw-2">&amp;</span>param.ident;
+            <span class="macro">quote! </span>{ #name , }
+        })
+        .collect::&lt;TokenStream2&gt;();
+    <span class="kw">let </span>generic_types = <span class="kw">if </span>generic_types.is_empty() {
+        generic_types
+    } <span class="kw">else </span>{
+        <span class="macro">quote! </span>{ ::&lt;#generic_types&gt; }
+    };
+
+    <span class="comment">// Generate the body of the function. This mainly depends on the self type,
+    // but also on the proxy type.
+    </span><span class="kw">let </span>fn_name = <span class="kw-2">&amp;</span>sig.ident;
+    <span class="kw">let </span>body = <span class="kw">match </span>self_arg {
+        <span class="comment">// Fn proxy types get a special treatment
+        </span><span class="kw">_ if </span>proxy_type.is_fn() =&gt; {
+            <span class="macro">quote! </span>{ ({<span class="self">self</span>})(#args) }
+        }
+
+        <span class="comment">// No receiver
+        </span>SelfType::None =&gt; {
+            <span class="comment">// The proxy type is a reference, smart pointer or Box.
+            </span><span class="macro">quote! </span>{ #proxy_ty_param::#fn_name #generic_types(#args) }
+        }
+
+        <span class="comment">// Receiver `self` (by value)
+        </span>SelfType::Value =&gt; {
+            <span class="comment">// The proxy type is a Box.
+            </span><span class="macro">quote! </span>{ #proxy_ty_param::#fn_name #generic_types(<span class="kw-2">*</span><span class="self">self</span>, #args) }
+        }
+
+        <span class="comment">// `&amp;self` or `&amp;mut self` receiver
+        </span>SelfType::Ref | SelfType::Mut =&gt; {
+            <span class="comment">// The proxy type could be anything in the `Ref` case, and `&amp;mut`
+            // or Box in the `Mut` case.
+            </span><span class="macro">quote! </span>{ #proxy_ty_param::#fn_name #generic_types(<span class="self">self</span>, #args) }
+        }
+    };
+
+    <span class="comment">// Combine body with signature
+    </span><span class="prelude-val">Ok</span>(<span class="macro">quote! </span>{ #sig { #body }})
+}
+
+
+<span class="attr">#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+</span><span class="kw">enum </span>SelfType {
+    <span class="prelude-val">None</span>,
+    Ref,
+    Mut,
+    Value,
+}
+
+<span class="kw">impl </span>SelfType {
+    <span class="kw">fn </span>from_sig(sig: <span class="kw-2">&amp;</span>Signature) -&gt; <span class="self">Self </span>{
+        <span class="kw">match </span>sig.inputs.iter().next() {
+            <span class="prelude-val">Some</span>(FnArg::Receiver(r)) =&gt; {
+                <span class="kw">if </span>r.reference.is_none() {
+                    SelfType::Value
+                } <span class="kw">else if </span>r.mutability.is_none() {
+                    SelfType::Ref
+                } <span class="kw">else </span>{
+                    SelfType::Mut
+                }
+            }
+            <span class="kw">_ </span>=&gt; SelfType::None,
+        }
+    }
+
+    <span class="kw">fn </span>as_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str&gt; {
+        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
+            SelfType::None =&gt; <span class="prelude-val">None</span>,
+            SelfType::Ref =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;&amp;self&quot;</span>),
+            SelfType::Mut =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;&amp;mut self&quot;</span>),
+            SelfType::Value =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;self&quot;</span>),
+        }
+    }
+}
+
+<span class="doccomment">/// Checks if this method can be implemented for the given proxy type. If not,
+/// we will emit an error pointing to the method signature.
+</span><span class="kw">fn </span>check_receiver_compatible(
+    proxy_type: <span class="kw-2">&amp;</span>ProxyType,
+    self_arg: SelfType,
+    trait_name: <span class="kw-2">&amp;</span>Ident,
+    sig_span: Span2,
+) {
+    <span class="kw">match </span>(proxy_type, self_arg) {
+        (ProxyType::Ref, SelfType::Mut) | (ProxyType::Ref, SelfType::Value) =&gt; {
+            <span class="macro">emit_error!</span>(
+                sig_span,
+                <span class="string">&quot;the trait `{}` cannot be auto-implemented for immutable references, because \
+                    this method has a `{}` receiver&quot;</span>,
+                    trait_name,
+                    self_arg.as_str().unwrap();
+
+                note = <span class="string">&quot;only `&amp;self` and no receiver are allowed&quot;</span>;
+            );
+        }
+
+        (ProxyType::RefMut, SelfType::Value) =&gt; {
+            <span class="macro">emit_error!</span>(
+                sig_span,
+                <span class="string">&quot;the trait `{}` cannot be auto-implemented for mutable references, because \
+                    this method has a `self` receiver&quot;</span>,
+                trait_name;
+
+                note = <span class="string">&quot;only `&amp;self`, `&amp;mut self` and no receiver are allowed&quot;</span>;
+            );
+        }
+
+        (ProxyType::Rc, SelfType::Mut)
+        | (ProxyType::Rc, SelfType::Value)
+        | (ProxyType::Arc, SelfType::Mut)
+        | (ProxyType::Arc, SelfType::Value) =&gt; {
+            <span class="kw">let </span>ptr_name = <span class="kw">if </span><span class="kw-2">*</span>proxy_type == ProxyType::Rc {
+                <span class="string">&quot;Rc&quot;
+            </span>} <span class="kw">else </span>{
+                <span class="string">&quot;Arc&quot;
+            </span>};
+
+            <span class="macro">emit_error!</span>(
+                sig_span,
+                <span class="string">&quot;the trait `{}` cannot be auto-implemented for {}, because \
+                    this method has a `{}` receiver&quot;</span>,
+                    trait_name,
+                    ptr_name,
+                    self_arg.as_str().unwrap();
+
+                note = <span class="string">&quot;only `&amp;self` and no receiver are allowed&quot;</span>;
+            );
+        }
+
+        (ProxyType::Fn, <span class="kw">_</span>) | (ProxyType::FnMut, <span class="kw">_</span>) | (ProxyType::FnOnce, <span class="kw">_</span>) =&gt; {
+            <span class="comment">// The Fn-trait being compatible with the receiver was already
+            // checked before (in `gen_fn_type_for_trait()`).
+        </span>}
+
+        <span class="kw">_ </span>=&gt; {} <span class="comment">// All other combinations are fine
+    </span>}
+}
+
+<span class="doccomment">/// Generates a list of comma-separated arguments used to call the function.
+/// Currently, only simple names are valid and more complex pattern will lead
+/// to an error being emitted. `self` parameters are ignored.
+</span><span class="kw">fn </span>get_arg_list&lt;<span class="lifetime">&#39;a</span>&gt;(inputs: <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>FnArg&gt;) -&gt; TokenStream2 {
+    <span class="kw">let </span><span class="kw-2">mut </span>args = TokenStream2::new();
+
+    <span class="kw">for </span>arg <span class="kw">in </span>inputs {
+        <span class="kw">match </span>arg {
+            FnArg::Typed(arg) =&gt; {
+                <span class="comment">// Make sure the argument pattern is a simple name. In
+                // principle, we could probably support patterns, but it&#39;s
+                // not that important now.
+                </span><span class="kw">if let </span>Pat::Ident(PatIdent {
+                    by_ref: <span class="prelude-val">None</span>,
+                    mutability: <span class="prelude-val">None</span>,
+                    ident,
+                    subpat: <span class="prelude-val">None</span>,
+                    ..
+                }) = <span class="kw-2">&amp;*</span>arg.pat
+                {
+                    <span class="comment">// Add name plus trailing comma to tokens
+                    </span>args.append_all(<span class="macro">quote! </span>{ #ident , });
+                } <span class="kw">else </span>{
+                    <span class="macro">emit_error!</span>(
+                        arg.pat.span(), <span class="string">&quot;argument patterns are not supported by #[auto-impl]&quot;</span>;
+                        help = <span class="string">&quot;please use a simple name like \&quot;foo\&quot; (but not `_`)&quot;</span>;
+                    );
+                    <span class="kw">continue</span>;
+                }
+            }
+
+            <span class="comment">// There is only one such argument. We handle it elsewhere and
+            // can ignore it here.
+            </span>FnArg::Receiver(<span class="kw">_</span>) =&gt; {}
+        }
+    }
+
+    args
+}
+
+<span class="doccomment">/// Checks if the given method has the attribute `#[auto_impl(keep_default_for(...))]`
+/// and if it contains the given proxy type.
+</span><span class="kw">fn </span>should_keep_default_for(m: <span class="kw-2">&amp;</span>TraitItemMethod, proxy_type: <span class="kw-2">&amp;</span>ProxyType) -&gt; bool {
+    <span class="comment">// Get an iterator of just the attribute we are interested in.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>it = m
+        .attrs
+        .iter()
+        .filter(|attr| is_our_attr(attr))
+        .filter_map(|attr| parse_our_attr(<span class="kw-2">&amp;</span>attr).ok());
+
+    <span class="comment">// Check the first (and hopefully only) `keep_default_for` attribute.
+    </span><span class="kw">let </span>out = <span class="kw">match </span>it.next() {
+        <span class="prelude-val">Some</span>(attr) =&gt; {
+            <span class="comment">// Check if the attribute lists the given proxy type.
+            </span><span class="kw">let </span>OurAttr::KeepDefaultFor(proxy_types) = attr;
+            proxy_types.contains(proxy_type)
+        }
+
+        <span class="comment">// If there is no such attribute, we return `false`
+        </span><span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
+    };
+
+    <span class="comment">// Check if there is another such attribute (which we disallow)
+    </span><span class="kw">if </span>it.next().is_some() {
+        <span class="macro">emit_error!</span>(
+            m.sig.span(),
+            <span class="string">&quot;found two `keep_default_for` attributes on one method&quot;</span>,
+        );
+    }
+
+    out
+}
+</code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="auto_impl" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.67.0-nightly (11ebe6512 2022-11-01)" ></div></body></html>

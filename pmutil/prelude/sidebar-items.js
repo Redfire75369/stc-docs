@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":[["q","Shortcut for `Quote::new_call_site().quote_with(smart_quote!( $tokens ))`"],["smart_quote","ide-friendly quasi quotting."]],"struct":[["Quote","Buffer for quasi quotting."]],"trait":[["SpanExt","Extension trait for Span and syn::Span."]]};

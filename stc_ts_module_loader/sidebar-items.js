@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["resolvers",""]],"struct":[["ModuleGraph","Implementation note"]]};

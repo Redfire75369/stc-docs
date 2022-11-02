@@ -1,0 +1,560 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/redfire/.cargo/registry/src/github.com-1ecc6299db9ec823/lexical-core-0.7.6/src/itoa/generic.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>generic.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../lexical_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+</pre><pre class="rust"><code><span class="doccomment">//! Mildly fast, generic, lexical integer-to-string conversion routines.
+
+</span><span class="comment">//  The following benchmarks were run on an &quot;Intel(R) Core(TM) i7-6560U
+//  CPU @ 2.20GHz&quot; CPU, on Fedora 28, Linux kernel version 4.18.16-200
+//  (x86-64), using the lexical formatter, `itoa::write()` or `x.to_string()`,
+//  avoiding any inefficiencies in Rust string parsing for `format!(...)`
+//  or `write!()` macros. The code was compiled with LTO and at an optimization
+//  level of 3.
+//
+//  The benchmarks with `std` were compiled using &quot;rustc 1.32.0
+// (9fda7c223 2019-01-16&quot;.
+//
+//  The benchmark code may be found `benches/itoa.rs`.
+//
+//  # Benchmarks
+//
+//  | Type  |  lexical (ns/iter) | libcore (ns/iter)     | Relative Increase |
+//  |:-----:|:------------------:|:---------------------:|:-----------------:|
+//  | u8    | 122,329            | 413,025               | 3.38x             |
+//  | u16   | 119,888            | 405,945               | 3.41x             |
+//  | u32   | 121,150            | 423,174               | 3.49x             |
+//  | u64   | 165,609            | 531,862               | 3.21x             |
+//  | i8    | 151,478            | 458,374               | 3.03x             |
+//  | i16   | 153,211            | 489,010               | 3.19x             |
+//  | i32   | 149,433            | 517,710               | 3.46x             |
+//  | i64   | 195,575            | 553,387               | 2.83x             |
+//
+//  # Raw Benchmarks
+//
+//  ```text
+//  test itoa_i8_itoa     ... bench:     130,969 ns/iter (+/- 7,420)
+//  test itoa_i8_lexical  ... bench:     151,478 ns/iter (+/- 7,510)
+//  test itoa_i8_std      ... bench:     458,374 ns/iter (+/- 26,663)
+//  test itoa_i16_itoa    ... bench:     143,344 ns/iter (+/- 9,495)
+//  test itoa_i16_lexical ... bench:     153,211 ns/iter (+/- 7,365)
+//  test itoa_i16_std     ... bench:     489,010 ns/iter (+/- 25,319)
+//  test itoa_i32_itoa    ... bench:     176,494 ns/iter (+/- 9,596)
+//  test itoa_i32_lexical ... bench:     149,433 ns/iter (+/- 5,803)
+//  test itoa_i32_std     ... bench:     517,710 ns/iter (+/- 38,439)
+//  test itoa_i64_itoa    ... bench:     205,055 ns/iter (+/- 12,436)
+//  test itoa_i64_lexical ... bench:     195,575 ns/iter (+/- 8,007)
+//  test itoa_i64_std     ... bench:     553,387 ns/iter (+/- 26,731)
+//  test itoa_u8_itoa     ... bench:     112,529 ns/iter (+/- 4,514)
+//  test itoa_u8_lexical  ... bench:     122,329 ns/iter (+/- 9,902)
+//  test itoa_u8_std      ... bench:     413,025 ns/iter (+/- 30,262)
+//  test itoa_u16_itoa    ... bench:      91,936 ns/iter (+/- 5,405)
+//  test itoa_u16_lexical ... bench:     119,888 ns/iter (+/- 6,089)
+//  test itoa_u16_std     ... bench:     405,945 ns/iter (+/- 24,104)
+//  test itoa_u32_itoa    ... bench:     161,679 ns/iter (+/- 6,719)
+//  test itoa_u32_lexical ... bench:     121,150 ns/iter (+/- 7,580)
+//  test itoa_u32_std     ... bench:     423,174 ns/iter (+/- 21,801)
+//  test itoa_u64_itoa    ... bench:     203,847 ns/iter (+/- 18,512)
+//  test itoa_u64_lexical ... bench:     165,609 ns/iter (+/- 8,620)
+//  test itoa_u64_std     ... bench:     531,862 ns/iter (+/- 31,223)
+//  ```
+
+// Code the generate the benchmark plot:
+//  import numpy as np
+//  import pandas as pd
+//  import matplotlib.pyplot as plt
+//  plt.style.use(&#39;ggplot&#39;)
+//  lexical = np.array([122329, 119888, 121150, 165609, 151478, 153211, 149433, 195575]) / 1e6
+//  itoa = np.array([112529, 91936, 161679, 203847, 130969, 143344, 176494, 205055]) / 1e6
+//  rustcore = np.array([413025, 405945, 423174, 531862, 458374, 489010, 517710, 553387]) / 1e6
+//  index = [&quot;u8&quot;, &quot;u16&quot;, &quot;u32&quot;, &quot;u64&quot;, &quot;i8&quot;, &quot;i16&quot;, &quot;i32&quot;, &quot;i64&quot;]
+//  df = pd.DataFrame({&#39;lexical&#39;: lexical, &#39;itoa&#39;: itoa, &#39;rustcore&#39;: rustcore}, index = index, columns=[&#39;lexical&#39;, &#39;itoa&#39;, &#39;rustcore&#39;])
+//  ax = df.plot.bar(rot=0, figsize=(16, 8), fontsize=14, color=[&#39;#E24A33&#39;, &#39;#988ED5&#39;, &#39;#348ABD&#39;])
+//  ax.set_ylabel(&quot;ms/iter&quot;)
+//  ax.figure.tight_layout()
+//  ax.legend(loc=2, prop={&#39;size&#39;: 14})
+//  plt.show()
+
+</span><span class="kw">use </span><span class="kw">crate</span>::util::<span class="kw-2">*</span>;
+
+<span class="comment">// Generic itoa algorithm.
+</span><span class="macro">macro_rules! </span>generic_algorithm {
+    (<span class="macro-nonterminal">$value</span>:ident, <span class="macro-nonterminal">$radix</span>:ident, <span class="macro-nonterminal">$buffer</span>:ident, <span class="macro-nonterminal">$t</span>:tt, <span class="macro-nonterminal">$table</span>:ident, <span class="macro-nonterminal">$index</span>:ident, <span class="macro-nonterminal">$radix2</span>:ident, <span class="macro-nonterminal">$radix4</span>:ident) =&gt; ({
+        <span class="kw">while </span><span class="macro-nonterminal">$value </span>&gt;= <span class="macro-nonterminal">$radix4 </span>{
+            <span class="kw">let </span>r = <span class="macro-nonterminal">$value </span>% <span class="macro-nonterminal">$radix4</span>;
+            <span class="macro-nonterminal">$value </span>/= <span class="macro-nonterminal">$radix4</span>;
+            <span class="kw">let </span>r1 = (<span class="macro-nonterminal">$t::TWO </span>* (r / <span class="macro-nonterminal">$radix2</span>)).as_usize();
+            <span class="kw">let </span>r2 = (<span class="macro-nonterminal">$t::TWO </span>* (r % <span class="macro-nonterminal">$radix2</span>)).as_usize();
+
+            <span class="comment">// This is always safe, since the table is 2*radix^2, and
+            // r1 and r2 must be in the range [0, 2*radix^2-1), since the maximum
+            // value of r is `radix4-1`, which must have a div and r
+            // in the range [0, radix^2-1).
+            </span><span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = <span class="macro">unchecked_index!</span>(<span class="macro-nonterminal">$table</span>[r2+<span class="number">1</span>]));
+            <span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = <span class="macro">unchecked_index!</span>(<span class="macro-nonterminal">$table</span>[r2]));
+            <span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = <span class="macro">unchecked_index!</span>(<span class="macro-nonterminal">$table</span>[r1+<span class="number">1</span>]));
+            <span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = <span class="macro">unchecked_index!</span>(<span class="macro-nonterminal">$table</span>[r1]));
+        }
+
+        <span class="comment">// Decode 2 digits at a time.
+        </span><span class="kw">while </span><span class="macro-nonterminal">$value </span>&gt;= <span class="macro-nonterminal">$radix2 </span>{
+            <span class="kw">let </span>r = (<span class="macro-nonterminal">$t::TWO </span>* (<span class="macro-nonterminal">$value </span>% <span class="macro-nonterminal">$radix2</span>)).as_usize();
+            <span class="macro-nonterminal">$value </span>/= <span class="macro-nonterminal">$radix2</span>;
+
+            <span class="comment">// This is always safe, since the table is 2*radix^2, and
+            // r must be in the range [0, 2*radix^2-1).
+            </span><span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = <span class="macro">unchecked_index!</span>(<span class="macro-nonterminal">$table</span>[r+<span class="number">1</span>]));
+            <span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = <span class="macro">unchecked_index!</span>(<span class="macro-nonterminal">$table</span>[r]));
+        }
+
+        <span class="comment">// Decode last 2 digits.
+        </span><span class="kw">if </span><span class="macro-nonterminal">$value </span>&lt; <span class="macro-nonterminal">$radix </span>{
+            <span class="comment">// This is always safe, since value &lt; radix, so it must be &lt; 36.
+            // Digit must be &lt;= 36.
+            </span><span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = digit_to_char(<span class="macro-nonterminal">$value</span>));
+            <span class="comment">//*iter.next().unwrap() = digit_to_char(value);
+        </span>} <span class="kw">else </span>{
+            <span class="kw">let </span>r = (<span class="macro-nonterminal">$t::TWO </span>* <span class="macro-nonterminal">$value</span>).as_usize();
+            <span class="comment">// This is always safe, since the table is 2*radix^2, and the value
+            // must &lt;= radix^2, so rem must be in the range [0, 2*radix^2-1).
+            </span><span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = <span class="macro">unchecked_index!</span>(<span class="macro-nonterminal">$table</span>[r+<span class="number">1</span>]));
+            <span class="macro-nonterminal">$index </span>-= <span class="number">1</span>;
+            <span class="macro">unchecked_index_mut!</span>(<span class="macro-nonterminal">$buffer</span>[<span class="macro-nonterminal">$index</span>] = <span class="macro">unchecked_index!</span>(<span class="macro-nonterminal">$table</span>[r]));
+        }
+    });
+}
+
+<span class="comment">// Get lookup table for 2 digit radix conversions.
+</span><span class="macro">perftools_inline!</span>{
+<span class="attr">#[cfg(feature = <span class="string">&quot;radix&quot;</span>)]
+</span><span class="kw">fn </span>get_table(radix: u32) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] {
+    <span class="kw">match </span>radix {
+        <span class="number">2   </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE2_SQUARED,
+        <span class="number">3   </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE3_SQUARED,
+        <span class="number">4   </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE4_SQUARED,
+        <span class="number">5   </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE5_SQUARED,
+        <span class="number">6   </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE6_SQUARED,
+        <span class="number">7   </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE7_SQUARED,
+        <span class="number">8   </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE8_SQUARED,
+        <span class="number">9   </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE9_SQUARED,
+        <span class="number">10  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE10_SQUARED,
+        <span class="number">11  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE11_SQUARED,
+        <span class="number">12  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE12_SQUARED,
+        <span class="number">13  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE13_SQUARED,
+        <span class="number">14  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE14_SQUARED,
+        <span class="number">15  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE15_SQUARED,
+        <span class="number">16  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE16_SQUARED,
+        <span class="number">17  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE17_SQUARED,
+        <span class="number">18  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE18_SQUARED,
+        <span class="number">19  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE19_SQUARED,
+        <span class="number">20  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE20_SQUARED,
+        <span class="number">21  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE21_SQUARED,
+        <span class="number">22  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE22_SQUARED,
+        <span class="number">23  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE23_SQUARED,
+        <span class="number">24  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE24_SQUARED,
+        <span class="number">25  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE25_SQUARED,
+        <span class="number">26  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE26_SQUARED,
+        <span class="number">27  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE27_SQUARED,
+        <span class="number">28  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE28_SQUARED,
+        <span class="number">29  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE29_SQUARED,
+        <span class="number">30  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE30_SQUARED,
+        <span class="number">31  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE31_SQUARED,
+        <span class="number">32  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE32_SQUARED,
+        <span class="number">33  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE33_SQUARED,
+        <span class="number">34  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE34_SQUARED,
+        <span class="number">35  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE35_SQUARED,
+        <span class="number">36  </span>=&gt; <span class="kw-2">&amp;</span>DIGIT_TO_BASE36_SQUARED,
+        <span class="kw">_   </span>=&gt; <span class="macro">unreachable!</span>(),
+    }
+}}
+
+<span class="comment">// Get lookup table for 2 digit radix conversions.
+</span><span class="macro">perftools_inline!</span>{
+<span class="attr">#[cfg(not(feature = <span class="string">&quot;radix&quot;</span>))]
+</span><span class="kw">fn </span>get_table(<span class="kw">_</span>: u32) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[u8] {
+   <span class="kw-2">&amp;</span>DIGIT_TO_BASE10_SQUARED
+}}
+
+<span class="comment">// Optimized implementation for radix-N numbers.
+// Precondition: `value` must be non-negative and mutable.
+</span><span class="macro">perftools_inline!</span>{
+<span class="attr">#[allow(unused_unsafe)]
+</span><span class="kw">fn </span>generic&lt;T&gt;(<span class="kw-2">mut </span>value: T, radix: u32, table: <span class="kw-2">&amp;</span>[u8], buffer: <span class="kw-2">&amp;mut </span>[u8])
+    -&gt; usize
+    <span class="kw">where </span>T: UnsignedInteger
+{
+    <span class="comment">// Both forms of unchecked indexing cannot overflow.
+    // The table always has 2*radix^2 elements, so it must be a legal index.
+    // The buffer is ensured to have at least MAX_DIGITS or MAX_DIGITS_BASE10
+    // characters, which is the maximum number of digits an integer of
+    // that size may write.
+
+    // Use power-reduction to minimize the number of operations.
+    // Idea taken from &quot;3 Optimization Tips for C++&quot;.
+    </span><span class="kw">let </span>radix: T = as_cast(radix);
+    <span class="kw">let </span>radix2 = radix * radix;
+    <span class="kw">let </span>radix4 = radix2 * radix2;
+
+    <span class="comment">// Decode 4-digits at a time
+    </span><span class="kw">let </span><span class="kw-2">mut </span>index = buffer.len();
+    <span class="macro">generic_algorithm!</span>(value, radix, buffer, T, table, index, radix2, radix4);
+    index
+}}
+
+<span class="comment">// Optimized implementation for radix-N numbers.
+// Precondition:
+//  `value` must be non-negative and mutable.
+//  Buffer must be 0-initialized.
+</span><span class="macro">perftools_inline!</span>{
+<span class="attr">#[allow(unused_unsafe)]
+</span><span class="kw">fn </span>generic_u128(value: u128, radix: u32, table: <span class="kw-2">&amp;</span>[u8], buffer: <span class="kw-2">&amp;mut </span>[u8])
+    -&gt; usize
+{
+    <span class="comment">// Both forms of unchecked indexing cannot overflow.
+    // The table always has 2*radix^2 elements, so it must be a legal index.
+    // The buffer is ensured to have at least MAX_DIGITS or MAX_DIGITS_BASE10
+    // characters, which is the maximum number of digits an integer of
+    // that size may write.
+
+    // Use power-reduction to minimize the number of operations.
+    // Idea taken from &quot;3 Optimization Tips for C++&quot;.
+    </span><span class="kw">let </span>(divisor, digits_per_iter, d_cltz) = u128_divisor(radix);
+    <span class="kw">let </span>radix: u64 = as_cast(radix);
+    <span class="kw">let </span>radix2 = radix * radix;
+    <span class="kw">let </span>radix4 = radix2 * radix2;
+
+    <span class="comment">// Decode 4-digits at a time.
+    // To deal with internal 0 values or values with internal 0 digits set,
+    // we store the starting index, and if not all digits are written,
+    // we just skip down `digits` digits for the next value.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>index = buffer.len();
+    <span class="kw">let </span><span class="kw-2">mut </span>start_index = index;
+    <span class="kw">let </span>(value, <span class="kw-2">mut </span>low) = u128_divrem(value, divisor, d_cltz);
+    <span class="macro">generic_algorithm!</span>(low, radix, buffer, u64, table, index, radix2, radix4);
+    <span class="kw">if </span>value != <span class="number">0 </span>{
+        start_index -= digits_per_iter;
+        index = index.min(start_index);
+        <span class="kw">let </span>(value, <span class="kw-2">mut </span>mid) = u128_divrem(value, divisor, d_cltz);
+        <span class="macro">generic_algorithm!</span>(mid, radix, buffer, u64, table, index, radix2, radix4);
+
+        <span class="kw">if </span>value != <span class="number">0 </span>{
+            start_index -= digits_per_iter;
+            index = index.min(start_index);
+            <span class="kw">let </span><span class="kw-2">mut </span>high = value <span class="kw">as </span>u64;
+            <span class="macro">generic_algorithm!</span>(high, radix, buffer, u64, table, index, radix2, radix4);
+        }
+    }
+    index
+}}
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait </span>Generic {
+    <span class="comment">// Export integer to string.
+    </span><span class="kw">fn </span>generic(<span class="self">self</span>, radix: u32, buffer: <span class="kw-2">&amp;mut </span>[u8]) -&gt; usize;
+}
+
+<span class="comment">// Implement generic for type.
+</span><span class="macro">macro_rules! </span>generic_impl {
+    ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; ($(
+        <span class="kw">impl </span>Generic <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
+            <span class="macro">perftools_inline_always!</span>{
+            <span class="kw">fn </span>generic(<span class="self">self</span>, radix: u32, buffer: <span class="kw-2">&amp;mut </span>[u8]) -&gt; usize {
+                <span class="kw">let </span>table = get_table(radix);
+                generic(<span class="self">self</span>, radix, table, buffer)
+            }}
+        }
+    )<span class="kw-2">*</span>);
+}
+
+<span class="macro">generic_impl! </span>{ u8 u16 u32 u64 usize }
+
+<span class="kw">impl </span>Generic <span class="kw">for </span>u128 {
+    <span class="macro">perftools_inline_always!</span>{
+    <span class="kw">fn </span>generic(<span class="self">self</span>, radix: u32, buffer: <span class="kw-2">&amp;mut </span>[u8]) -&gt; usize {
+        <span class="kw">let </span>table = get_table(radix);
+        generic_u128(<span class="self">self</span>, radix, table, buffer)
+    }}
+}
+</code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="lexical_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.67.0-nightly (11ebe6512 2022-11-01)" ></div></body></html>

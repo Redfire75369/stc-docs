@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["ArcCow",""],["BoxedArcCow",""]],"fn":[["_assert_trait_impls",""]],"mod":[["freeze",""]]};

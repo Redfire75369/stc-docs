@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["apply_mapped_flags",""],["is_str_lit_or_union",""]],"mod":[["bindings","Module to precomput known bindings."],["fix",""]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Checker","Onc instance per swc::Compiler"]]};

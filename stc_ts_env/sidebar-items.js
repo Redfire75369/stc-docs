@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["ModuleConfig",""]],"struct":[["BuiltIn",""],["Env","Stuffs which can be changed between runs."],["Marks",""],["Rule",""],["StableEnv","Stuffs which are not changed regardless"]],"trait":[["MarkExt",""]]};

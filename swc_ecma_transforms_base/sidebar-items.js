@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"macro":[["enable_helper",""]],"mod":[["fixer",""],["helpers",""],["hygiene",""],["pass",""],["perf",""],["quote",""],["resolver",""],["scope",""]]};

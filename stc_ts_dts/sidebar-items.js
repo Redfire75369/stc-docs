@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["apply_mutations",""],["cleanup_module_for_dts","Make `module` suitable for .d.ts file."]]};

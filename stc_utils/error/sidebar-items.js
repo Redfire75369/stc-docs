@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["current_context",""],["span","Add a context to created errors and configures a context for panic."]],"struct":[["ContextGuard",""]]};
