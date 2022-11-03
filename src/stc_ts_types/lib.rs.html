@@ -2576,12 +2576,6 @@
 <span id="2576">2576</span>
 <span id="2577">2577</span>
 <span id="2578">2578</span>
-<span id="2579">2579</span>
-<span id="2580">2580</span>
-<span id="2581">2581</span>
-<span id="2582">2582</span>
-<span id="2583">2583</span>
-<span id="2584">2584</span>
 </pre><pre class="rust"><code><span class="doccomment">//! This crate exists to reduce compile time.
 //!
 //! The visitor is too slow to compile every time I make change.
@@ -3776,8 +3770,7 @@
         tys.dedup_type();
 
         <span class="kw">let </span>has_str = tys.iter().any(|ty| ty.is_str());
-        <span class="comment">// TODO
-        </span><span class="kw">let </span>has_bool = tys.iter().any(|ty| ty.is_kwd(TsKeywordTypeKind::TsBooleanKeyword));
+        <span class="kw">let </span>has_bool = tys.iter().any(|ty| ty.is_bool());
         <span class="kw">let </span>has_num = tys.iter().any(|ty| ty.is_num());
 
         <span class="kw">if </span>(has_str &amp;&amp; has_bool) || (has_bool &amp;&amp; has_num) || (has_num &amp;&amp; has_str) {
@@ -4433,8 +4426,6 @@
 
 </span><span class="kw">impl </span>Type {
     <span class="doccomment">/// Converts this type to foldable type.
-    ///
-    /// TODO(kdy1): Remove if possible
     </span><span class="kw">pub fn </span>foldable(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; Type {
         <span class="self">self</span>.normalize_mut();
         <span class="self">self
@@ -4470,8 +4461,6 @@
     }
 
     <span class="doccomment">/// `Type::Static` is normalized.
-    ///
-    /// TODO(kdy1): Remove if possible
     </span><span class="attr">#[instrument(skip(<span class="self">self</span>))]
     </span><span class="kw">pub fn </span>normalize_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Type {
         <span class="kw">match </span><span class="self">self </span>{
@@ -4485,8 +4474,7 @@
         <span class="self">self
     </span>}
 
-    <span class="doccomment">/// TODO(kdy1): Make this more efficient, and explode subunions.
-    </span><span class="kw">pub fn </span>iter_union(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Debug + Iterator&lt;Item = <span class="kw-2">&amp;</span>Type&gt; {
+    <span class="kw">pub fn </span>iter_union(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Debug + Iterator&lt;Item = <span class="kw-2">&amp;</span>Type&gt; {
         Iter {
             ty: <span class="self">self</span>.normalize(),
             idx: <span class="number">0</span>,

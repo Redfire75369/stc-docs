@@ -188,7 +188,7 @@
 
 <span class="kw">type </span>Inner = SmallVec&lt;[Id; <span class="number">4</span>]&gt;;
 
-<span class="doccomment">/// Efficient alternative for [RTsEntityName].
+<span class="doccomment">/// Efficient alternative for names with variable length like `foo.bar.baz.qux`.
 </span><span class="attr">#[derive(Clone, PartialEq, Eq, Hash)]
 </span><span class="kw">pub struct </span>Name(Inner);
 

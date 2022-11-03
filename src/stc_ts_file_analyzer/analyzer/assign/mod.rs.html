@@ -2486,6 +2486,9 @@
 <span id="2486">2486</span>
 <span id="2487">2487</span>
 <span id="2488">2488</span>
+<span id="2489">2489</span>
+<span id="2490">2490</span>
+<span id="2491">2491</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::{borrow::Cow, collections::HashMap};
 
 <span class="kw">use </span>stc_ts_ast_rnode::{RBool, RIdent, RStr, RTsEntityName, RTsLit};
@@ -3012,7 +3015,7 @@
         <span class="kw">let </span>span = opts.span;
 
         <span class="kw">if </span>!<span class="self">self</span>.is_builtin &amp;&amp; span.is_dummy() {
-            <span class="macro">panic!</span>(<span class="string">&quot;cannot assign with dummy span&quot;</span>)
+            <span class="macro">unreachable!</span>(<span class="string">&quot;cannot assign with dummy span&quot;</span>)
         }
 
         <span class="kw">let </span>_tracing = <span class="kw">if </span><span class="macro">cfg!</span>(debug_assertions) {
@@ -4440,9 +4443,12 @@
 
             Type::Function(lf) =&gt; <span class="kw">match </span>rhs {
                 Type::Function(..) | Type::TypeLit(..) | Type::Interface(..) =&gt; {
-                    <span class="kw">return </span><span class="self">self
-                        </span>.assign_to_function(data, opts, to, lf, rhs)
-                        .context(<span class="string">&quot;tried to assign to a function type&quot;</span>)
+                    <span class="kw">return </span><span class="self">self</span>.assign_to_function(data, opts, to, lf, rhs).with_context(|| {
+                        <span class="macro">format!</span>(
+                            <span class="string">&quot;tried to assign to a function type: {}&quot;</span>,
+                            dump_type_as_string(<span class="kw-2">&amp;</span><span class="self">self</span>.cm, <span class="kw-2">&amp;</span>Type::Function(lf.clone()))
+                        )
+                    })
                 }
                 Type::Keyword(KeywordType {
                     kind: TsKeywordTypeKind::TsVoidKeyword,
@@ -4482,16 +4488,16 @@
                 <span class="comment">//
                 </span><span class="kw">match </span><span class="kw-2">*</span>rhs.normalize() {
                     Type::Tuple(Tuple { elems: <span class="kw-2">ref </span>rhs_elems, .. }) =&gt; {
-                        <span class="kw">if </span>elems.len() &lt; rhs_elems.len() {
+                        <span class="comment">// TODO: Handle Type::Rest
+
+                        </span><span class="kw">if </span>elems.len() &lt; rhs_elems.len() {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::AssignFailedBecauseTupleLengthDiffers { span });
                         }
 
-                        <span class="kw">if </span>elems.len() &gt; rhs_elems.len() {
-                            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::AssignFailedBecauseTupleLengthDiffers { span });
-                        }
+                        <span class="comment">// TODO: Handle Type::Rest
 
-                        <span class="kw">if </span>!elems.is_empty() &amp;&amp; rhs_elems.is_empty() {
-                            <span class="macro">fail!</span>();
+                        </span><span class="kw">if </span>elems.len() &gt; rhs_elems.len() {
+                            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::AssignFailedBecauseTupleLengthDiffers { span });
                         }
 
                         <span class="kw">let </span><span class="kw-2">mut </span>errors = <span class="macro">vec!</span>[];

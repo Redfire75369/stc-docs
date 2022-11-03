@@ -3504,6 +3504,7 @@
 <span id="3504">3504</span>
 <span id="3505">3505</span>
 <span id="3506">3506</span>
+<span id="3507">3507</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles new expressions and call expressions.
 </span><span class="kw">use </span>std::{borrow::Cow, collections::HashMap};
 
@@ -6085,6 +6086,7 @@
                 preserve_ret_ty: <span class="bool-val">true</span>,
                 ..<span class="self">self</span>.ctx
             };
+            ret_ty.fix();
             <span class="kw">let </span>ret_ty = <span class="self">self</span>.with_ctx(ctx).expand(span, ret_ty, Default::default())<span class="question-mark">?</span>;
 
             <span class="kw">for </span>item <span class="kw">in </span><span class="kw-2">&amp;</span>expanded_param_types {

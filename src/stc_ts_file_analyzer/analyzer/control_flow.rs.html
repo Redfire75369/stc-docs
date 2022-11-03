@@ -1341,6 +1341,7 @@
 <span id="1341">1341</span>
 <span id="1342">1342</span>
 <span id="1343">1343</span>
+<span id="1344">1344</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::{
     borrow::{Borrow, Cow},
     collections::hash_map::Entry,
@@ -1644,6 +1645,7 @@
                             <span class="kw-2">*</span>e.get_mut() = Type::new_union(DUMMY_SP, <span class="macro">vec!</span>[prev, v]).cheap();
                         }
                     };
+                    e.get_mut().fix();
                     e.get_mut().make_clone_cheap();
                 }
                 Entry::Vacant(e) =&gt; {

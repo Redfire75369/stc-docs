@@ -820,10 +820,6 @@
 <span id="820">820</span>
 <span id="821">821</span>
 <span id="822">822</span>
-<span id="823">823</span>
-<span id="824">824</span>
-<span id="825">825</span>
-<span id="826">826</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 
 <span class="kw">use </span>itertools::Itertools;
@@ -832,7 +828,7 @@
 <span class="kw">use </span>stc_ts_errors::{debug::dump_type_as_string, DebugExt, Error};
 <span class="kw">use </span>stc_ts_type_ops::{widen::Widen, Fix};
 <span class="kw">use </span>stc_ts_types::{Array, Key, KeywordType, LitType, ModuleId, Ref, Type, TypeLit, TypeParamInstantiation, Union};
-<span class="kw">use </span>stc_ts_utils::PatExt;
+<span class="kw">use </span>stc_ts_utils::{run, PatExt};
 <span class="kw">use </span>stc_utils::{cache::Freeze, TryOpt};
 <span class="kw">use </span>swc_common::{Span, Spanned, SyntaxContext, DUMMY_SP};
 <span class="kw">use </span>swc_ecma_ast::{TsKeywordTypeKind, VarDeclKind};
@@ -1437,38 +1433,11 @@
             }
 
             RPat::Rest(pat) =&gt; {
-                <span class="kw">let </span>ty = ty
-                    .map(|ty| {
-                        Type::Array(Array {
-                            span,
-                            elem_type: <span class="kw">box </span>ty,
-                            metadata: Default::default(),
-                        })
-                    })
-                    .freezed();
-                <span class="kw">return </span><span class="self">self</span>.add_vars(
-                    <span class="kw-2">&amp;</span>pat.arg,
-                    ty,
-                    actual
-                        .map(|ty| {
-                            Type::Array(Array {
-                                span,
-                                elem_type: <span class="kw">box </span>ty,
-                                metadata: Default::default(),
-                            })
-                        })
-                        .freezed(),
-                    default
-                        .map(|ty| {
-                            Type::Array(Array {
-                                span,
-                                elem_type: <span class="kw">box </span>ty,
-                                metadata: Default::default(),
-                            })
-                        })
-                        .freezed(),
-                    opts,
-                );
+                <span class="kw">let </span>ty = ty.map(|ty| <span class="self">self</span>.ensure_iterable(span, ty)).transpose()<span class="question-mark">?</span>;
+                <span class="kw">let </span>actual = actual.map(|ty| <span class="self">self</span>.ensure_iterable(span, ty)).transpose()<span class="question-mark">?</span>;
+                <span class="kw">let </span>default = default.map(|ty| <span class="self">self</span>.ensure_iterable(span, ty)).transpose()<span class="question-mark">?</span>;
+
+                <span class="kw">return </span><span class="self">self</span>.add_vars(<span class="kw-2">&amp;</span>pat.arg, ty, actual, default, opts);
             }
 
             <span class="kw">_ </span>=&gt; {
@@ -1648,6 +1617,29 @@
 
             <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(<span class="string">&quot;declare_vars for patterns other than ident: {:#?}&quot;</span>, pat),
         }
+    }
+
+    <span class="kw">fn </span>ensure_iterable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, span: Span, ty: Type) -&gt; VResult&lt;Type&gt; {
+        run(|| {
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>(..) = <span class="self">self</span>.get_iterator(
+                span,
+                Cow::Borrowed(<span class="kw-2">&amp;</span>ty),
+                GetIteratorOpts {
+                    disallow_str: <span class="bool-val">true</span>,
+                    ..Default::default()
+                },
+            ) {
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(ty.cheap());
+            }
+
+            <span class="prelude-val">Ok</span>(Type::Array(Array {
+                span,
+                elem_type: <span class="kw">box </span>ty,
+                metadata: Default::default(),
+            })
+            .cheap())
+        })
+        .context(<span class="string">&quot;tried to ensure iterator&quot;</span>)
     }
 }
 </code></pre></div>

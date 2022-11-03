@@ -850,6 +850,7 @@
 <span class="kw">use crate</span>::{
     analyzer::{
         assign::{AssignData, AssignOpts},
+        expr::GetIteratorOpts,
         generic::InferTypeOpts,
         Analyzer,
     },
@@ -1501,13 +1502,12 @@
                     </span>.normalize(<span class="prelude-val">Some</span>(span), Cow::Borrowed(<span class="kw-2">&amp;</span>l.ty), Default::default())
                     .context(<span class="string">&quot;tried to normalize lhs&quot;</span>)<span class="question-mark">?</span>;
 
-                <span class="kw">match </span>l_ty.normalize() {
-                    Type::Array(l_arr) =&gt; {
-                        <span class="kw">if let </span><span class="prelude-val">Ok</span>(()) = <span class="self">self</span>.assign_with_opts(data, opts, <span class="kw-2">&amp;</span>l_arr.elem_type, <span class="kw-2">&amp;</span>r.ty) {
-                            <span class="kw">return </span><span class="prelude-val">Ok</span>(());
-                        }
+                <span class="kw">let </span>l_elem_type = <span class="self">self</span>.get_iterator_element_type(span, l_ty, <span class="bool-val">false</span>, GetIteratorOpts { ..Default::default() });
+
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>(l_elem_type) = l_elem_type {
+                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(()) = <span class="self">self</span>.assign_with_opts(data, opts, <span class="kw-2">&amp;</span>l_elem_type, <span class="kw-2">&amp;</span>r.ty) {
+                        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
                     }
-                    <span class="kw">_ </span>=&gt; {}
                 }
             }
             <span class="kw">_ </span>=&gt; {}

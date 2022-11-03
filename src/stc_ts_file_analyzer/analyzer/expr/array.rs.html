@@ -849,6 +849,17 @@
 <span id="849">849</span>
 <span id="850">850</span>
 <span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::{borrow::Cow, time::Instant};
 
 <span class="kw">use </span>itertools::Itertools;
@@ -859,7 +870,10 @@
     type_id::SymbolId, Array, CommonTypeMetadata, ComputedKey, Intersection, Key, KeywordType, KeywordTypeMetadata, LitType, Symbol, Tuple,
     TupleElement, Type, TypeParamInstantiation, Union, UnionMetadata,
 };
-<span class="kw">use </span>stc_utils::{cache::Freeze, ext::TypeVecExt};
+<span class="kw">use </span>stc_utils::{
+    cache::Freeze,
+    ext::{SpanExt, TypeVecExt},
+};
 <span class="kw">use </span>swc_atoms::js_word;
 <span class="kw">use </span>swc_common::{Span, Spanned, SyntaxContext};
 <span class="kw">use </span>swc_ecma_ast::TsKeywordTypeKind;
@@ -1385,12 +1399,15 @@
         iterator: Cow&lt;<span class="lifetime">&#39;a</span>, Type&gt;,
         start_index: usize,
     ) -&gt; VResult&lt;Cow&lt;<span class="lifetime">&#39;a</span>, Type&gt;&gt; {
-        <span class="kw">let </span>iterator = <span class="self">self</span>.normalize(span, iterator, NormalizeTypeOpts { ..Default::default() })<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>iterator = <span class="self">self</span>.normalize(span, iterator, NormalizeTypeOpts { ..Default::default() })<span class="question-mark">?</span>;
 
         <span class="kw">if </span>iterator.is_tuple() {
+            iterator.make_clone_cheap();
             <span class="kw">let </span>ty = iterator.into_owned().expect_tuple();
 
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(Cow::Owned(Type::Tuple(Tuple {
+            <span class="comment">// TODO: Handle [Type::Rest]
+
+            </span><span class="kw">return </span><span class="prelude-val">Ok</span>(Cow::Owned(Type::Tuple(Tuple {
                 elems: ty.elems.into_iter().skip(start_index).collect(),
                 ..ty
             })));
@@ -1629,7 +1646,12 @@
                     .types
                     .iter()
                     .map(|iterator| {
-                        <span class="self">self</span>.get_iterator_element_type(iterator.span(), Cow::Borrowed(iterator), try_next_value, Default::default())
+                        <span class="self">self</span>.get_iterator_element_type(
+                            iterator.span().or_else(|| span),
+                            Cow::Borrowed(iterator),
+                            try_next_value,
+                            Default::default(),
+                        )
                     })
                     .map(|ty| ty.map(Cow::into_owned))
                     .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()<span class="question-mark">?</span>;

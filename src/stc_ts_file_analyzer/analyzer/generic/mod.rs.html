@@ -2524,6 +2524,10 @@
 <span id="2524">2524</span>
 <span id="2525">2525</span>
 <span id="2526">2526</span>
+<span id="2527">2527</span>
+<span id="2528">2528</span>
+<span id="2529">2529</span>
+<span id="2530">2530</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::{borrow::Cow, collections::hash_map::Entry, mem::take, time::Instant};
 
 <span class="kw">use </span>fxhash::{FxHashMap, FxHashSet};
@@ -3121,7 +3125,7 @@
 
                         <span class="kw">if </span>!orig.eq_ignore_span(<span class="kw-2">&amp;</span>constraint.as_ref().unwrap()) {
                             print_backtrace();
-                            <span class="macro">panic!</span>(
+                            <span class="macro">unreachable!</span>(
                                 <span class="string">&quot;Cannot override T in `T extends &lt;literal&gt;`\nOrig: {:?}\nConstraints: {:?}&quot;</span>,
                                 orig, constraint
                             )
@@ -3693,15 +3697,18 @@
                     preserve_params: <span class="bool-val">true</span>,
                     ..<span class="self">self</span>.ctx
                 };
-                <span class="kw">let </span>arg = <span class="self">self</span>.with_ctx(ctx).expand(
-                    span,
-                    arg.clone(),
-                    ExpandOpts {
-                        full: <span class="bool-val">true</span>,
-                        expand_union: <span class="bool-val">true</span>,
-                        ..Default::default()
-                    },
-                )<span class="question-mark">?</span>;
+                <span class="kw">let </span>arg = <span class="self">self
+                    </span>.with_ctx(ctx)
+                    .expand(
+                        span,
+                        arg.clone(),
+                        ExpandOpts {
+                            full: <span class="bool-val">true</span>,
+                            expand_union: <span class="bool-val">true</span>,
+                            ..Default::default()
+                        },
+                    )<span class="question-mark">?
+                    </span>.cheap();
                 <span class="kw">match </span>arg.normalize() {
                     Type::Ref(..) =&gt; {}
                     <span class="kw">_ </span>=&gt; {
@@ -4058,7 +4065,8 @@
                                             </span><span class="kw">let </span>mapped_param_ty = arg_prop_ty
                                                 .clone()
                                                 .foldable()
-                                                .fold_with(<span class="kw-2">&amp;mut </span>SingleTypeParamReplacer { name: <span class="kw-2">&amp;</span>name, to: param_ty });
+                                                .fold_with(<span class="kw-2">&amp;mut </span>SingleTypeParamReplacer { name: <span class="kw-2">&amp;</span>name, to: param_ty })
+                                                .cheap();
 
                                             <span class="self">self</span>.infer_type(span, inferred, <span class="kw-2">&amp;</span>mapped_param_ty, arg_prop_ty, opts)<span class="question-mark">?</span>;
                                         }
@@ -4518,10 +4526,10 @@
                     }) =&gt; <span class="kw">match </span><span class="kw-2">&amp;</span>param.ty {
                         <span class="prelude-val">Some</span>(param_ty) =&gt; <span class="kw">match </span>arg {
                             Type::TypeLit(arg_lit) =&gt; {
-                                <span class="kw">let </span>revesed_param_ty = param_ty.clone().fold_with(<span class="kw-2">&amp;mut </span>MappedReverser::default());
-                                print_type(<span class="kw-2">&amp;</span><span class="string">&quot;reversed&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.cm, <span class="kw-2">&amp;</span>revesed_param_ty);
+                                <span class="kw">let </span>reversed_param_ty = param_ty.clone().fold_with(<span class="kw-2">&amp;mut </span>MappedReverser::default()).cheap();
+                                print_type(<span class="kw-2">&amp;</span><span class="string">&quot;reversed&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.cm, <span class="kw-2">&amp;</span>reversed_param_ty);
 
-                                <span class="self">self</span>.infer_type(span, inferred, <span class="kw-2">&amp;</span>revesed_param_ty, arg, opts)<span class="question-mark">?</span>;
+                                <span class="self">self</span>.infer_type(span, inferred, <span class="kw-2">&amp;</span>reversed_param_ty, arg, opts)<span class="question-mark">?</span>;
 
                                 <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="bool-val">true</span>);
                             }

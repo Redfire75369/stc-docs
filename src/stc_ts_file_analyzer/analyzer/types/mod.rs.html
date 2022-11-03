@@ -2295,7 +2295,7 @@
                                     }
 
                                     <span class="kw">if </span>expanded_ty.is_query() {
-                                        <span class="macro">panic!</span>(
+                                        <span class="macro">unreachable!</span>(
                                             <span class="string">&quot;normalize: resolve_typeof returned a query type: {}&quot;</span>,
                                             dump_type_as_string(<span class="kw-2">&amp;</span><span class="self">self</span>.cm, <span class="kw-2">&amp;</span>expanded_ty)
                                         )
