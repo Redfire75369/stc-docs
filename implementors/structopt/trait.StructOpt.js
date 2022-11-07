@@ -1,4 +1,4 @@
 (function() {var implementors = {
-"stc":[["impl <a class=\"trait\" href=\"structopt/trait.StructOpt.html\" title=\"trait structopt::StructOpt\">StructOpt</a> for <a class=\"struct\" href=\"stc/check/struct.IterateCommand.html\" title=\"struct stc::check::IterateCommand\">IterateCommand</a>"],["impl <a class=\"trait\" href=\"structopt/trait.StructOpt.html\" title=\"trait structopt::StructOpt\">StructOpt</a> for <a class=\"enum\" href=\"stc/enum.Command.html\" title=\"enum stc::Command\">Command</a>"]],
+"stc":[["impl <a class=\"trait\" href=\"structopt/trait.StructOpt.html\" title=\"trait structopt::StructOpt\">StructOpt</a> for <a class=\"struct\" href=\"stc/check/struct.TestCommand.html\" title=\"struct stc::check::TestCommand\">TestCommand</a>"],["impl <a class=\"trait\" href=\"structopt/trait.StructOpt.html\" title=\"trait structopt::StructOpt\">StructOpt</a> for <a class=\"enum\" href=\"stc/enum.Command.html\" title=\"enum stc::Command\">Command</a>"]],
 "structopt":[]
 };if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

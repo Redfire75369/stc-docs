@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/stc_ts_file_analyzer/src/analyzer/expr/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../stc_ts_file_analyzer/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/stc_ts_file_analyzer/src/analyzer/expr/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-b826345d929eb323.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-87108236bf50c158.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-839c5fb8722cb456.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-d48ac194417684c8.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-74087aa2e88f4475.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-0dede64717b247ca.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-201a7e04dc4c6fce.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../../stc_ts_file_analyzer/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -3821,6 +3821,69 @@
 <span id="3821">3821</span>
 <span id="3822">3822</span>
 <span id="3823">3823</span>
+<span id="3824">3824</span>
+<span id="3825">3825</span>
+<span id="3826">3826</span>
+<span id="3827">3827</span>
+<span id="3828">3828</span>
+<span id="3829">3829</span>
+<span id="3830">3830</span>
+<span id="3831">3831</span>
+<span id="3832">3832</span>
+<span id="3833">3833</span>
+<span id="3834">3834</span>
+<span id="3835">3835</span>
+<span id="3836">3836</span>
+<span id="3837">3837</span>
+<span id="3838">3838</span>
+<span id="3839">3839</span>
+<span id="3840">3840</span>
+<span id="3841">3841</span>
+<span id="3842">3842</span>
+<span id="3843">3843</span>
+<span id="3844">3844</span>
+<span id="3845">3845</span>
+<span id="3846">3846</span>
+<span id="3847">3847</span>
+<span id="3848">3848</span>
+<span id="3849">3849</span>
+<span id="3850">3850</span>
+<span id="3851">3851</span>
+<span id="3852">3852</span>
+<span id="3853">3853</span>
+<span id="3854">3854</span>
+<span id="3855">3855</span>
+<span id="3856">3856</span>
+<span id="3857">3857</span>
+<span id="3858">3858</span>
+<span id="3859">3859</span>
+<span id="3860">3860</span>
+<span id="3861">3861</span>
+<span id="3862">3862</span>
+<span id="3863">3863</span>
+<span id="3864">3864</span>
+<span id="3865">3865</span>
+<span id="3866">3866</span>
+<span id="3867">3867</span>
+<span id="3868">3868</span>
+<span id="3869">3869</span>
+<span id="3870">3870</span>
+<span id="3871">3871</span>
+<span id="3872">3872</span>
+<span id="3873">3873</span>
+<span id="3874">3874</span>
+<span id="3875">3875</span>
+<span id="3876">3876</span>
+<span id="3877">3877</span>
+<span id="3878">3878</span>
+<span id="3879">3879</span>
+<span id="3880">3880</span>
+<span id="3881">3881</span>
+<span id="3882">3882</span>
+<span id="3883">3883</span>
+<span id="3884">3884</span>
+<span id="3885">3885</span>
+<span id="3886">3886</span>
 </pre><pre class="rust"><code><span class="kw">use </span>std::{
     borrow::Cow,
     collections::HashMap,
@@ -3845,7 +3908,7 @@
 <span class="kw">use </span>stc_ts_types::{
     name::Name, Alias, Class, ClassDef, ClassMember, ClassProperty, CommonTypeMetadata, ComputedKey, Id, Key, KeywordType,
     KeywordTypeMetadata, LitType, LitTypeMetadata, Method, ModuleId, Operator, OptionalType, PropertySignature, QueryExpr, QueryType,
-    QueryTypeMetadata, StaticThis, ThisType,
+    QueryTypeMetadata, StaticThis, ThisType, TplType, TplTypeMetadata,
 };
 <span class="kw">use </span>stc_utils::{cache::Freeze, debug_ctx, ext::TypeVecExt, stack};
 <span class="kw">use </span>swc_atoms::js_word;
@@ -4073,7 +4136,7 @@
                 RExpr::Paren(RParenExpr { <span class="kw-2">ref </span>expr, .. }) =&gt; expr.validate_with_args(<span class="self">self</span>, (mode, type_args, type_ann)),
 
                 RExpr::Tpl(<span class="kw-2">ref </span>e) =&gt; {
-                    <span class="kw">return </span>e.validate_with(<span class="self">self</span>);
+                    <span class="kw">return </span>e.validate_with_args(<span class="self">self</span>, type_ann);
                 }
 
                 RExpr::TsNonNull(RTsNonNullExpr { span, <span class="kw-2">ref </span>expr, .. }) =&gt; {
@@ -4228,14 +4291,28 @@
                             mark_var_as_truthy = <span class="bool-val">true</span>;
                             ty
                         })
-                        .map_err(|v| {
-                            <span class="kw">match </span>v.actual() {
-                                Error::CannotAssignToNonVariable { .. } =&gt; {
-                                    skip_right = <span class="bool-val">true</span>;
+                        .convert_err(|err| {
+                            skip_right = <span class="bool-val">true</span>;
+                            <span class="kw">match </span>err.actual() {
+                                Error::CannotAssignToNonVariable { .. } =&gt; <span class="kw">match </span>analyzer.scope.vars.get(<span class="kw-2">&amp;</span>i.into()) {
+                                    <span class="prelude-val">Some</span>(v) <span class="kw">if </span>v.kind == VarKind::Fn =&gt; Error::CannotAssignToFunction { span },
+                                    <span class="kw">_ </span>=&gt; err,
+                                },
+                                Error::NotVariable { ty, .. } =&gt; <span class="kw">match </span>ty {
+                                    <span class="prelude-val">Some</span>(ty) =&gt; <span class="kw">match </span>ty.normalize() {
+                                        Type::Module(..) =&gt; Error::CannotAssignToNamespace { span },
+                                        Type::Namespace(..) =&gt; Error::CannotAssignToModule { span },
+                                        Type::ClassDef(..) =&gt; Error::CannotAssignToClass { span },
+                                        Type::Enum(..) =&gt; Error::CannotAssignToEnum { span },
+                                        <span class="kw">_ </span>=&gt; err,
+                                    },
+                                    <span class="kw">_ </span>=&gt; err,
+                                },
+                                <span class="kw">_ </span>=&gt; {
+                                    skip_right = <span class="bool-val">false</span>;
+                                    err
                                 }
-                                <span class="kw">_ </span>=&gt; {}
                             }
-                            v
                         })
                         .report(<span class="kw-2">&amp;mut </span>analyzer.storage);
 
@@ -4354,6 +4431,12 @@
     </span><span class="kw">pub </span>use_undefined_for_tuple_index_error: bool,
 
     <span class="kw">pub </span>for_validation_of_indexed_access_type: bool,
+
+    <span class="doccomment">/// If `true`, `access_property` will not return undefined for object
+    /// literal types created with a spread.
+    ///
+    /// This is true for destructuring variable declarations.
+    </span><span class="kw">pub </span>disallow_inexact: bool,
 }
 
 <span class="attr">#[validator]
@@ -5849,7 +5932,7 @@
                 });
             }
 
-            Type::TypeLit(TypeLit { <span class="kw-2">ref </span>members, .. }) =&gt; {
+            Type::TypeLit(TypeLit { <span class="kw-2">ref </span>members, metadata, .. }) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = <span class="self">self</span>.access_property_of_type_elements(span, <span class="kw-2">&amp;</span>obj, prop, type_mode, members, opts)<span class="question-mark">? </span>{
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(v);
                 }
@@ -5892,7 +5975,13 @@
                     }
                 }
 
-                <span class="macro">dbg!</span>();
+                <span class="kw">if </span>!opts.disallow_inexact &amp;&amp; metadata.inexact {
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(Type::Keyword(KeywordType {
+                        span,
+                        kind: TsKeywordTypeKind::TsUndefinedKeyword,
+                        metadata: Default::default(),
+                    }));
+                }
 
                 <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NoSuchProperty {
                     span,
@@ -5994,7 +6083,7 @@
                         <span class="kw">let </span>v = n.value.round() <span class="kw">as </span>i64;
 
                         <span class="kw">if </span>v &lt; <span class="number">0 </span>{
-                            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::TupleIndexError {
+                            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NegativeTupleIndex {
                                 span: n.span(),
                                 index: v,
                                 len: elems.len() <span class="kw">as </span>u64,
@@ -6702,7 +6791,11 @@
         <span class="kw">let </span><span class="kw-2">mut </span>modules = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>ty = <span class="self">self</span>.type_of_raw_var(i, type_mode)<span class="question-mark">?</span>;
         <span class="kw">if </span>type_mode == TypeOfMode::LValue &amp;&amp; (ty.is_class_def() || ty.is_enum_type()) {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NotVariable { span, left: span });
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NotVariable {
+                span,
+                left: span,
+                ty: <span class="prelude-val">Some</span>(<span class="kw">box </span>ty.clone()),
+            });
         }
         ty.assert_valid();
         <span class="kw">if let </span><span class="prelude-val">Some</span>(type_args) = type_args {
@@ -6735,7 +6828,13 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(types) = <span class="self">self</span>.find_type(<span class="self">self</span>.ctx.module_id, <span class="kw-2">&amp;</span>id)<span class="question-mark">? </span>{
                 <span class="kw">for </span>ty <span class="kw">in </span>types {
                     <span class="kw">match </span>ty.normalize() {
-                        Type::Module(..) =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NotVariable { span, left: span }),
+                        Type::Module(..) =&gt; {
+                            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NotVariable {
+                                span,
+                                left: span,
+                                ty: <span class="prelude-val">Some</span>(<span class="kw">box </span>ty.normalize().clone()),
+                            })
+                        }
                         <span class="kw">_ </span>=&gt; {}
                     }
                 }
@@ -6890,7 +6989,11 @@
         <span class="kw">match </span>i.sym {
             <span class="macro">js_word!</span>(<span class="string">&quot;undefined&quot;</span>) =&gt; {
                 <span class="kw">match </span>type_mode {
-                    TypeOfMode::LValue =&gt; <span class="self">self</span>.storage.report(Error::NotVariable { span, left: span }),
+                    TypeOfMode::LValue =&gt; <span class="self">self</span>.storage.report(Error::NotVariable {
+                        span,
+                        left: span,
+                        ty: <span class="prelude-val">None</span>,
+                    }),
                     TypeOfMode::RValue =&gt; {}
                 }
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(Type::undefined(span, Default::default()));
@@ -7604,7 +7707,7 @@
 
 <span class="attr">#[validator]
 </span><span class="kw">impl </span>Analyzer&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>&gt; {
-    <span class="kw">fn </span>validate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, e: <span class="kw-2">&amp;</span>RTpl) -&gt; VResult {
+    <span class="kw">fn </span>validate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, e: <span class="kw-2">&amp;</span>RTpl, type_ann: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Type&gt;) -&gt; VResult {
         e.exprs.visit_with(<span class="self">self</span>);
 
         <span class="kw">if </span>e.exprs.is_empty() {
@@ -7613,6 +7716,29 @@
                 lit: RTsLit::Str(e.quasis[<span class="number">0</span>].cooked.clone().unwrap_or_else(|| e.quasis[<span class="number">0</span>].raw.clone())),
                 metadata: Default::default(),
             }));
+        }
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(type_ann) = type_ann {
+            <span class="kw">match </span><span class="self">self
+                </span>.normalize(<span class="prelude-val">None</span>, Cow::Borrowed(type_ann.normalize_instance()), Default::default())<span class="question-mark">?
+                </span>.as_ref()
+                .normalize()
+            {
+                Type::Tpl(TplType { span, quasis, types, .. }) =&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Ok</span>(Type::Tpl(TplType {
+                        span: <span class="kw-2">*</span>span,
+                        quasis: quasis.clone(),
+                        types: types.clone(),
+                        metadata: TplTypeMetadata {
+                            common: CommonTypeMetadata {
+                                prevent_generalization: <span class="bool-val">true</span>,
+                                ..Default::default()
+                            },
+                        },
+                    }))
+                }
+                <span class="kw">_ </span>=&gt; {}
+            }
         }
 
         <span class="prelude-val">Ok</span>(Type::Keyword(KeywordType {
@@ -7645,4 +7771,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="stc_ts_file_analyzer" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.67.0-nightly (11ebe6512 2022-11-01)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="stc_ts_file_analyzer" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.0-nightly (7eef946fc 2022-11-06)" data-search-js="search-39ee4160c7dc16c9.js" data-settings-js="settings-3a0b9947ba1bd99a.js" data-settings-css="settings-a66f7524084a489a.css" ></div></body></html>

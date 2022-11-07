@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["IterateCommand","Iterate 1000 times to profile."]]};
+window.SIDEBAR_ITEMS = {"struct":[["TestCommand","Perform type checking, but this command is not public api and is only used for testing."]]};
